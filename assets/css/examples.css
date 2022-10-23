@@ -1,0 +1,75 @@
+body {
+
+	width: 1200px;
+	height: 1000px;
+	background-color:#000E00
+}
+
+header {
+	margin-top: 5px;
+}
+
+h1:before {
+	content:"PROMETHEAN METAL";
+	font-weight: bold;
+	padding-bottom: 20px;
+}
+
+header p {
+	padding-bottom: 10px;
+		padding-left: 20px;
+	background: rgba(48, 174, 232, .5);
+
+}
+
+.content, canvas {
+		padding-top: 50px;
+
+
+	background:#000E00 ;
+}
+
+button {
+	font-family: 'JetBrains Mono', monospace;
+	background-color:rgba(48, 174, 232, .5);
+}
+
+.content {
+	width: 400px;
+	height: 400px;
+	overflow: hidden;
+}
+
+.loading {
+	position: relative;
+}
+
+.loading:after {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -13px 0 0 -51px;
+	opacity: 0.8;
+}
+
+#error {
+	display:none;
+	width: 960px;
+	text-align: left;
+	padding: 10px;
+}
+
+#mobile {
+    display:none;
+    width: 960px;
+    text-align: left;
+    padding: 10px;
+}
+
+body.embedded header {
+	display: none;
+}
+
+body.embedded {
+	margin: 0;
+}

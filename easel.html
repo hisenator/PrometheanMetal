@@ -1,0 +1,129 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  	<meta charset="utf-8">
+  	<title>Foggy Effect</title>
+<link rel="stylesheet" href="https://use.typekit.net/ueo6nhx.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
+  	<link href="./assets/css/shared.css" rel="stylesheet" type="text/css"/>
+  	<link href="./assets/css/examples.css" rel="stylesheet" type="text/css"/>
+  	<script src="./assets/js/examples.js"></script>
+
+  	<script src="./lib/easeljs-NEXT.js"></script>
+  </head>
+
+  <body onload="init();">
+
+<header>
+  	<h1></h1>
+
+  	<p> “When falsehood can look so like the truth, who can assure themselves of certain happiness?”-
+Mary Shelley (1818) </p>
+  </header>
+
+  <div>
+  	<canvas id="testCanvas" width="400" height="400"></canvas>
+  </div>
+
+  <script>
+  	var stage;
+  	var isDrawing;
+  	var drawingCanvas;
+  	var oldPt;
+  	var oldMidPt;
+  	var image;
+  	var bitmap;
+  	var maskFilter;
+  	var cursor;
+  	var text;
+  	var blur;
+
+  	function init() {
+  		examples.showDistractor();
+
+  		image = new Image();
+  		image.onload = handleComplete;
+  		image.src = "./assets/T01.jpg";
+
+  		stage = new createjs.Stage("testCanvas");
+  		text = new createjs.Text("Loading...", "15px JetBrains Mono", "#00000");
+  		text.set({x: stage.canvas.width / 2, y: stage.canvas.height - 40});
+  		text.textAlign = "center";
+  	}
+
+  	function handleComplete() {
+  		examples.hideDistractor();
+  		createjs.Touch.enable(stage);
+  		stage.enableMouseOver();
+
+  		stage.addEventListener("stagemousedown", handleMouseDown);
+  		stage.addEventListener("stagemouseup", handleMouseUp);
+  		stage.addEventListener("stagemousemove", handleMouseMove);
+  		drawingCanvas = new createjs.Shape();
+  		drawingCanvas.cache(0, 0, image.width, image.height);
+
+  		bitmap = new createjs.Bitmap(image);
+  		maskFilter = new createjs.AlphaMaskFilter(drawingCanvas.cacheCanvas);
+  		bitmap.filters = [maskFilter];
+  		bitmap.cache(0, 0, image.width, image.height);
+
+  		blur = new createjs.Bitmap(image);
+  		blur.filters = [new createjs.BlurFilter(28, 28, 2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(60))];
+  		blur.cache(0, 0, 1000, 800);
+
+  		text.text = "Click and Drag to Reveal the Image.";
+
+  		stage.addChild(blur, text, bitmap);
+
+  		cursor = new createjs.Shape(new createjs.Graphics().beginFill("#00FFFF").drawRect(0,0, 35, 45));
+  		cursor.cursor = "pointer";
+  		stage.addChild(cursor);
+  	}
+
+  	function handleMouseDown(event) {
+  		oldPt = new createjs.Point(stage.mouseX, stage.mouseY);
+  		oldMidPt = oldPt;
+  		isDrawing = true;
+  	}
+
+  	function handleMouseMove(event) {
+  		cursor.x = stage.mouseX;
+  		cursor.y = stage.mouseY;
+
+  		if (!isDrawing) {
+  			stage.update();
+  			return;
+  		}
+
+  		var midPoint = new createjs.Point(oldPt.x + stage.mouseX >> 1, oldPt.y + stage.mouseY >> 1);
+
+  		drawingCanvas.graphics.clear()
+  				.setStrokeStyle(70, "round", "round")
+  				.beginStroke("rgba(0,0,0,0.4)")
+  				.moveTo(midPoint.x, midPoint.y)
+  				.curveTo(oldPt.x, oldPt.y, oldMidPt.x, oldMidPt.y);
+
+  		oldPt.x = stage.mouseX;
+  		oldPt.y = stage.mouseY;
+
+  		oldMidPt.x = midPoint.x;
+  		oldMidPt.y = midPoint.y;
+
+  		drawingCanvas.updateCache("source-over");
+  		bitmap.updateCache();
+
+  		stage.update();
+  	}
+
+  	function handleMouseUp(event) {
+  		isDrawing = false;
+  	}
+
+  </script>
+
+  </body>
+
+  <button type="button" onClick="enter()"> <a href= "./DragAndDrop.html"> Are you not entertained </button>
+  </html>
